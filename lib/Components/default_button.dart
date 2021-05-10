@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:passwordmanager/Components/size_config.dart';
+import 'package:passwordmanager/size_config.dart';
 
 import 'constants.dart';
 

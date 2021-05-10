@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:passwordmanager/Components/size_config.dart';
+
+import '../size_config.dart';
 
 class RoundedIconBtn extends StatelessWidget {
   const RoundedIconBtn({

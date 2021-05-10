@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:passwordmanager/Components/size_config.dart';
 import 'package:passwordmanager/SignInScreen/Components/SignInForm.dart';
 
 class Body extends StatefulWidget {
@@ -21,7 +20,7 @@ class _BodyState extends State<Body> {
         ),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Column(
                 children: <Widget>[
@@ -44,9 +43,8 @@ class _BodyState extends State<Body> {
                   ),
                 ],
               ),
-              SizedBox(height: SizeConfig.screenHeight * 50),
               SignInForm(),
-              SizedBox(height: SizeConfig.screenHeight * 0.08),
+              SizedBox(),
             ],
           ),
         ),

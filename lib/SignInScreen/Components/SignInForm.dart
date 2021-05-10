@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:passwordmanager/Components/constants.dart';
-import 'package:passwordmanager/Components/default_button.dart';
 import 'package:passwordmanager/Components/form_error.dart';
-import 'package:passwordmanager/Components/suffix_icon.dart';
+import 'package:passwordmanager/size_config.dart';
 
 class SignInForm extends StatefulWidget {
   static String? user;
   static String? password;
-
   @override
   _SignInFormState createState() => _SignInFormState();
 }
@@ -61,10 +59,43 @@ class _SignInFormState extends State<SignInForm> {
           SizedBox(
             height: 30,
           ),
-          FormError(errors: errors),
-          DefaultButton(
-            text: 'Continue',
-            press: () {},
+          TextButton(
+            style: TextButton.styleFrom(
+              primary: Colors.black87,
+              minimumSize: Size(180, 50),
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              side: BorderSide(color: Colors.white),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+            ),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                removeError(error: kEmailNullError);
+                removeError(error: kEmptyFieldError);
+                removeError(error: kPassNullError);
+              } else {
+                _formKey.currentState!.reset();
+              }
+            },
+            child: Text(
+              'Continue',
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              SizedBox(
+                height: getProportionateScreenHeight(100),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FormError(errors: errors),
+              ),
+            ],
           ),
         ],
       ),

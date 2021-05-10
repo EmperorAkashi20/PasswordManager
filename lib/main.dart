@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:passwordmanager/Components/custom_suffix_icon.dart';
 import 'package:passwordmanager/routes.dart';
+import 'package:passwordmanager/size_config.dart';
 
-import 'Components/app_theme.dart';
 import 'SignInScreen/signinscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
-
+  SizeConfig();
   runApp(MyApp());
 }
 

@@ -1,8 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-
-import 'constants.dart';
+import 'package:passwordmanager/Components/constants.dart';
 
 ThemeData theme() {
   return ThemeData(
