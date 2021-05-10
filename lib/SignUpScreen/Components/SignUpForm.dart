@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+
 import 'package:passwordmanager/Components/constants.dart';
 import 'package:passwordmanager/Components/form_error.dart';
-import 'package:passwordmanager/SignUpScreen/signupscreen.dart';
-import 'package:passwordmanager/size_config.dart';
+import 'package:passwordmanager/SignInScreen/signinscreen.dart';
 
-class SignInForm extends StatefulWidget {
+class SignUpForm extends StatefulWidget {
   static String? user;
   static String? password;
+  static String? confirmPassword;
   @override
-  _SignInFormState createState() => _SignInFormState();
+  _SignUpFormState createState() => _SignUpFormState();
 }
 
-class _SignInFormState extends State<SignInForm> {
+class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   bool? remember = false;
   final List<String?> errors = [];
@@ -37,24 +38,11 @@ class _SignInFormState extends State<SignInForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            backgroundColor: Colors.blueGrey.shade200,
-            radius: 35,
-            child: Text(
-              'R',
-              style: TextStyle(
-                color: Colors.blueGrey,
-                fontSize: 35,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          SizedBox(height: 30),
           buildUserFormField(),
-          SizedBox(
-            height: 30,
-          ),
+          SizedBox(height: 30),
           buildPasswordFormField(),
+          SizedBox(height: 30),
+          buildConfirmPasswordFormField(),
           SizedBox(height: 30),
           TextButton(
             style: TextButton.styleFrom(
@@ -86,10 +74,10 @@ class _SignInFormState extends State<SignInForm> {
           SizedBox(height: 30),
           TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, SignUpScreen.routeName);
+              Navigator.pushNamed(context, SignInScreen.routeName);
             },
             child: Text(
-              'New User? Create An Account',
+              'Have an Account? Sign In',
               style: TextStyle(
                 color: Colors.blueGrey.shade600,
               ),
@@ -111,7 +99,7 @@ class _SignInFormState extends State<SignInForm> {
       width: 500,
       child: TextFormField(
         obscureText: true,
-        onSaved: (newValue) => SignInForm.password = newValue,
+        onSaved: (newValue) => SignUpForm.password = newValue,
         onChanged: (value) {
           if (value.isNotEmpty) {
             removeError(error: kPassNullError);
@@ -143,13 +131,51 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 
+  Container buildConfirmPasswordFormField() {
+    return Container(
+      height: 50,
+      width: 500,
+      child: TextFormField(
+        obscureText: true,
+        onSaved: (newValue) => SignUpForm.confirmPassword = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kPassNullError);
+          } else if (value.length >= 2) {
+            removeError(error: kShortPassError);
+          }
+          return null;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kPassNullError);
+            return "";
+          } else if (value.length < 2) {
+            addError(error: kShortPassError);
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.white),
+          labelText: "Confirm Password",
+          hintText: "Re-enter your password",
+          // If  you are using latest version of flutter then lable text and hint text shown like this
+          // if you r using flutter less then 1.20.* then maybe this is not working properly
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+        ),
+      ),
+    );
+  }
+
   Container buildUserFormField() {
     return Container(
       height: 50,
       width: 500,
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
-        onSaved: (newValue) => SignInForm.user = newValue,
+        onSaved: (newValue) => SignUpForm.user = newValue,
         onChanged: (value) {
           if (value.isNotEmpty) {
             removeError(error: kEmailNullError);
@@ -171,7 +197,7 @@ class _SignInFormState extends State<SignInForm> {
         decoration: InputDecoration(
           errorStyle: TextStyle(color: Colors.white),
           labelText: "Username",
-          hintText: "Enter your username",
+          hintText: "Enter a username",
           // If  you are using latest version of flutter then lable text and hint text shown like this
           // if you r using flutter less then 1.20.* then maybe this is not working properly
           floatingLabelBehavior: FloatingLabelBehavior.always,

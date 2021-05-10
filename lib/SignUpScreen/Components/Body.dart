@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:passwordmanager/SignInScreen/Components/SignInForm.dart';
+
+import 'SignUpForm.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _BodyState extends State<Body> {
               Column(
                 children: <Widget>[
                   Text(
-                    'SIGN IN',
+                    'SIGN UP',
                     style: TextStyle(
                       color: Colors.blueGrey.shade800,
                       fontSize: 35,
@@ -33,7 +34,7 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                   Text(
-                    'Please Sign In to continue',
+                    'Please Create an Account to Continue',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -42,7 +43,7 @@ class _BodyState extends State<Body> {
                   ),
                 ],
               ),
-              SignInForm(),
+              SignUpForm(),
               SizedBox(),
             ],
           ),
