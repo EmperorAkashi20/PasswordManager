@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:passwordmanager/routes.dart';
 
 import 'Components/app_theme.dart';
+import 'SignInScreen/signinscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Password Manager',
       theme: theme(),
       routes: routes,
-      initialRoute: '', //OnBoardingScreen.routeName,
+      initialRoute: SignInScreen.routeName,
     );
   }
 }
