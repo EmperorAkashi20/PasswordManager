@@ -6,6 +6,7 @@ import 'package:passwordmanager/SignInScreen/signinscreen.dart';
 
 class SignUpForm extends StatefulWidget {
   static String? user;
+  static String? email;
   static String? password;
   static String? confirmPassword;
   @override
@@ -38,6 +39,8 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          buildEmailFormField(),
+          SizedBox(height: 30),
           buildUserFormField(),
           SizedBox(height: 30),
           buildPasswordFormField(),
@@ -54,7 +57,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 removeError(error: kEmailNullError);
@@ -169,12 +172,50 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  Container buildUserFormField() {
+  Container buildEmailFormField() {
     return Container(
       height: 50,
       width: 500,
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
+        onSaved: (newValue) => SignUpForm.email = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kEmailNullError);
+          } else if (emailValidatorRegExp.hasMatch(value)) {
+            removeError(error: kInvalidEmailError);
+          }
+          return null;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kEmailNullError);
+            return "";
+          } else if (!emailValidatorRegExp.hasMatch(value)) {
+            addError(error: kInvalidEmailError);
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.white),
+          labelText: "Email",
+          hintText: "Enter your email ID",
+          // If  you are using latest version of flutter then lable text and hint text shown like this
+          // if you r using flutter less then 1.20.* then maybe this is not working properly
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+        ),
+      ),
+    );
+  }
+
+  Container buildUserFormField() {
+    return Container(
+      height: 50,
+      width: 500,
+      child: TextFormField(
+        keyboardType: TextInputType.text,
         onSaved: (newValue) => SignUpForm.user = newValue,
         onChanged: (value) {
           if (value.isNotEmpty) {
