@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:passwordmanager/Components/constants.dart';
 import 'package:passwordmanager/Components/form_error.dart';
+import 'package:passwordmanager/Db/database.dart';
 import 'package:passwordmanager/SignUpScreen/signupscreen.dart';
-import 'package:passwordmanager/size_config.dart';
+
+import '../../main.dart';
 
 class SignInForm extends StatefulWidget {
   static String? user;
@@ -15,6 +17,21 @@ class _SignInFormState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
   bool? remember = false;
   final List<String?> errors = [];
+
+  Future<List<User>> users() async {
+    final db = await MyApp.database;
+
+    final List<Map<String, dynamic>> maps = await db.query('users');
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return User(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        password: maps[i]['password'],
+      );
+    });
+  }
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -66,12 +83,13 @@ class _SignInFormState extends State<SignInForm> {
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 removeError(error: kEmailNullError);
                 removeError(error: kEmptyFieldError);
                 removeError(error: kPassNullError);
+                print(await users());
               } else {
                 _formKey.currentState!.reset();
               }

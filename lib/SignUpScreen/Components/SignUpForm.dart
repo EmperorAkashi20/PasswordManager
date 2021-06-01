@@ -2,18 +2,76 @@ import 'package:flutter/material.dart';
 
 import 'package:passwordmanager/Components/constants.dart';
 import 'package:passwordmanager/Components/form_error.dart';
+import 'package:passwordmanager/Db/database.dart';
 import 'package:passwordmanager/SignInScreen/signinscreen.dart';
+import 'package:passwordmanager/main.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SignUpForm extends StatefulWidget {
   static String? user;
-  static String? email;
   static String? password;
   static String? confirmPassword;
+  static var digest;
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  // Define a function that inserts dogs into the database
+  Future<void> insertUser(User user) async {
+    final db = await MyApp.database;
+    await db.insert(
+      'users',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // A method that retrieves all the dogs from the dogs table.
+  Future<List<User>> users() async {
+    final db = await MyApp.database;
+
+    final List<Map<String, dynamic>> maps = await db.query('users');
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return User(
+        id: maps[i]['id'],
+        name: maps[i]['name'],
+        password: maps[i]['password'],
+      );
+    });
+  }
+
+  Future<void> updateUser(User user) async {
+    // Get a reference to the database.
+    final db = await MyApp.database;
+
+    // Update the given Dog.
+    await db.update(
+      'users',
+      user.toMap(),
+      // Ensure that the Dog has a matching id.
+      where: 'id = ?',
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [user.id],
+    );
+  }
+
+  Future<void> deleteUser(int id) async {
+    // Get a reference to the database.
+    final db = await MyApp.database;
+
+    // Remove the Dog from the database.
+    await db.delete(
+      'users',
+      // Use a `where` clause to delete a specific dog.
+      where: 'id = ?',
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [id],
+    );
+  }
+
   final _formKey = GlobalKey<FormState>();
   bool? remember = false;
   final List<String?> errors = [];
@@ -34,13 +92,16 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
+    var _id = 0;
+    var _user;
+    var _password;
     return Form(
       key: _formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          buildEmailFormField(),
-          SizedBox(height: 30),
+          // buildEmailFormField(),
+          // SizedBox(height: 30),
           buildUserFormField(),
           SizedBox(height: 30),
           buildPasswordFormField(),
@@ -58,11 +119,21 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
             ),
             onPressed: () async {
+              _user = SignUpForm.user.toString();
+              _password = SignUpForm.password.toString();
+              var fido = User(
+                id: _id + 1,
+                name: _user,
+                password: _password,
+              );
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 removeError(error: kEmailNullError);
                 removeError(error: kEmptyFieldError);
                 removeError(error: kPassNullError);
+                await insertUser(fido);
+
+                print(await users());
               } else {
                 _formKey.currentState!.reset();
               }
@@ -172,43 +243,43 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  Container buildEmailFormField() {
-    return Container(
-      height: 50,
-      width: 500,
-      child: TextFormField(
-        keyboardType: TextInputType.emailAddress,
-        onSaved: (newValue) => SignUpForm.email = newValue,
-        onChanged: (value) {
-          if (value.isNotEmpty) {
-            removeError(error: kEmailNullError);
-          } else if (emailValidatorRegExp.hasMatch(value)) {
-            removeError(error: kInvalidEmailError);
-          }
-          return null;
-        },
-        validator: (value) {
-          if (value!.isEmpty) {
-            addError(error: kEmailNullError);
-            return "";
-          } else if (!emailValidatorRegExp.hasMatch(value)) {
-            addError(error: kInvalidEmailError);
-            return "";
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          errorStyle: TextStyle(color: Colors.white),
-          labelText: "Email",
-          hintText: "Enter your email ID",
-          // If  you are using latest version of flutter then lable text and hint text shown like this
-          // if you r using flutter less then 1.20.* then maybe this is not working properly
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
-        ),
-      ),
-    );
-  }
+  // Container buildEmailFormField() {
+  //   return Container(
+  //     height: 50,
+  //     width: 500,
+  //     child: TextFormField(
+  //       keyboardType: TextInputType.emailAddress,
+  //       onSaved: (newValue) => SignUpForm.email = newValue,
+  //       onChanged: (value) {
+  //         if (value.isNotEmpty) {
+  //           removeError(error: kEmailNullError);
+  //         } else if (emailValidatorRegExp.hasMatch(value)) {
+  //           removeError(error: kInvalidEmailError);
+  //         }
+  //         return null;
+  //       },
+  //       validator: (value) {
+  //         if (value!.isEmpty) {
+  //           addError(error: kEmailNullError);
+  //           return "";
+  //         } else if (!emailValidatorRegExp.hasMatch(value)) {
+  //           addError(error: kInvalidEmailError);
+  //           return "";
+  //         }
+  //         return null;
+  //       },
+  //       decoration: InputDecoration(
+  //         errorStyle: TextStyle(color: Colors.white),
+  //         labelText: "Email",
+  //         hintText: "Enter your email ID",
+  //         // If  you are using latest version of flutter then lable text and hint text shown like this
+  //         // if you r using flutter less then 1.20.* then maybe this is not working properly
+  //         floatingLabelBehavior: FloatingLabelBehavior.always,
+  //         //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Container buildUserFormField() {
     return Container(
@@ -220,17 +291,12 @@ class _SignUpFormState extends State<SignUpForm> {
         onChanged: (value) {
           if (value.isNotEmpty) {
             removeError(error: kEmailNullError);
-          } else if (emailValidatorRegExp.hasMatch(value)) {
-            removeError(error: kInvalidEmailError);
           }
           return null;
         },
         validator: (value) {
           if (value!.isEmpty) {
             addError(error: kEmailNullError);
-            return "";
-          } else if (!emailValidatorRegExp.hasMatch(value)) {
-            addError(error: kInvalidEmailError);
             return "";
           }
           return null;
