@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passwordmanager/Components/constants.dart';
 import 'package:passwordmanager/Components/form_error.dart';
+import 'package:passwordmanager/Dashboard/dashboard.dart';
 import 'package:passwordmanager/Db/database.dart';
 import 'package:passwordmanager/SignUpScreen/signupscreen.dart';
 
@@ -90,6 +91,7 @@ class _SignInFormState extends State<SignInForm> {
                 removeError(error: kEmptyFieldError);
                 removeError(error: kPassNullError);
                 print(await users());
+                Navigator.pushNamed(context, Dashboard.routeName);
               } else {
                 _formKey.currentState!.reset();
               }
